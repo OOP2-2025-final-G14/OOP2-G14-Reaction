@@ -77,6 +77,10 @@ class MainWindow(QMainWindow):
 
     def toggle_server(self):
         if not self.is_running:
+            title = self.title_input.text() or "イベント"
+            self.title_input.setReadOnly(True)
+            self.server_thread.update_settings(title)
+            
             self.server_thread.daemon = True
             self.server_thread.start()
             self.is_running = True

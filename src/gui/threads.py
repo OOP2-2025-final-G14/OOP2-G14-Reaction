@@ -24,7 +24,12 @@ class FlaskServerThread(QThread):
         self.local_ip = get_local_ip()
         
         # Flaskアプリの作成 (コールバックとしてシグナル発火メソッドを渡す)
-        self.app = create_app(reaction_callback=self.emit_reaction)
+        # Flaskアプリはまだ作成しない (タイトル確定後に作成)
+        self.app = None
+
+    def update_settings(self, title):
+        """設定を更新してFlaskアプリを作成"""
+        self.app = create_app(reaction_callback=self.emit_reaction, title=title)
 
     def emit_reaction(self, emoji):
         """Flaskの中から呼ばれるコールバック"""
@@ -32,4 +37,5 @@ class FlaskServerThread(QThread):
 
     def run(self):
         # スレッド内でFlask起動
-        self.app.run(host=self.host, port=self.port, use_reloader=False)
+        if self.app:
+            self.app.run(host=self.host, port=self.port, use_reloader=False)
