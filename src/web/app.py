@@ -2,8 +2,9 @@ from flask import Flask, render_template, request, jsonify
 from src.db.database import Reaction, init_db, close_db
 
 
-def create_app(reaction_callback):
+def create_app(reaction_callback, title="イベント"):
     app = Flask(__name__)
+    app.config['TITLE'] = title
 
     # DB初期化
     init_db()
@@ -11,7 +12,7 @@ def create_app(reaction_callback):
     # 画面表示
     @app.route('/')
     def index():
-        return render_template('index.html')
+        return render_template('index.html', title=app.config['TITLE'])
 
     
     # リアクション登録
