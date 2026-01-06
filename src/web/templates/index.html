@@ -147,11 +147,11 @@ body {
 });
 }
 
-   async function fetchReactions() {
-  const res = await fetch('/api/reaction/summary');
-  const summary = await res.json();
+async function fetchReactions() {
+const res = await fetch('/api/reaction/summary');
+const summary = await res.json();
 
-  updateStacks(summary);
+updateStacks(summary);
 }
 
             
