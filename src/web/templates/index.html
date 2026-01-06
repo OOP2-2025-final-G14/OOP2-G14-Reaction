@@ -8,8 +8,79 @@
 </head>
 
 <body>
-    <h1>{{ title }}</h1>
-    <p>リアクションを送ってください！</p>
+    <div class="container">
+        <div class="topic-area">
+            <h1>{{ title }}</h1>
+            <p>ここにお題文が入ります</p>
+        </div>
+
+        <div class="reaction-area">
+            <div class="buttons">
+                <button onclick="sendReaction('👍')">👍</button>
+                <button onclick="sendReaction('😂')">😂</button>
+                <button onclick="sendReaction('❤️')">❤️</button>
+                <button onclick="sendReaction('😡')">😡</button>
+                <button onclick="sendReaction('😐')">😐</button>
+                <button onclick="sendReaction('🙅‍♀️')">🙅‍♀️</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<style>
+/*空白の隙間をなくす*/
+body {
+    margin: 0;
+}
+
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 上：お題エリア（60%） */
+.topic-area {
+    flex: 6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 下：リアクションエリア（40%） */
+.reaction-area {
+    flex: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.buttons button {
+    font-size: 2rem;
+    padding: 12px 16px;
+}
+</style>
+
+    <script>
+    function sendReaction(emoji) {
+        fetch('/api/reaction', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                emoji: emoji
+            })
+        });
+    }
+</script>
 </body>
 
 </html>
