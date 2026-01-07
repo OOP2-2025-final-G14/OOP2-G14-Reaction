@@ -67,4 +67,8 @@ def create_app(reaction_callback, title="イベント"):
     def shutdown_session(exception=None):
         close_db()
 
+    @app.route('/result')
+    def summary_page():
+        return render_template('result.html')
+
     return app
