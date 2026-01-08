@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -16,32 +17,12 @@
 
         <div class="reaction-area">
             <div class="buttons">
-
-                <div class="reaction-item" data-emoji="👍">
-                <div class="stack"></div>
                 <button onclick="sendReaction('👍')">👍</button>
-                </div>
-                <div class="reaction-item" data-emoji="😂">
-                <div class="stack"></div>
                 <button onclick="sendReaction('😂')">😂</button>
-                </div>
-                <div class="reaction-item" data-emoji="❤️">
-                <div class="stack"></div>
                 <button onclick="sendReaction('❤️')">❤️</button>
-                </div>
-                <div class="reaction-item" data-emoji="😡">
-                <div class="stack"></div>
                 <button onclick="sendReaction('😡')">😡</button>
-                </div>
-                <div class="reaction-item" data-emoji="😐">
-                <div class="stack"></div>
                 <button onclick="sendReaction('😐')">😐</button>
-                </div>
-                <div class="reaction-item" data-emoji="🙅‍♀️">
-                <div class="stack"></div>
                 <button onclick="sendReaction('🙅‍♀️')">🙅‍♀️</button>
-                <div id="reaction-log"></div>
-                </div>
             </div>
         </div>
     </div>
@@ -86,23 +67,6 @@ body {
     font-size: 2rem;
     padding: 12px 16px;
 }
-
-.reaction-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.stack {
-    min-height: 60px;
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 2px;
-}
-
-.stack span {
-    font-size: 1.2rem;
-}
 </style>
 
     <script>
@@ -117,52 +81,6 @@ body {
             })
         });
     }
-
-    function updateStacks(summary) {
-    summary.forEach(item => {
-    const box = document.querySelector(
-    `.reaction-item[data-emoji="${item.emoji}"]`
-    );
-    if (!box) return;
-
-    const stack = box.querySelector('.stack');
-    stack.innerHTML = '';
-
-    // 表示数は多くてもOK（例：20）
-    const maxDisplay = Math.min(item.count, 20);
-
-    for (let i = 0; i < maxDisplay; i++) {
-    const span = document.createElement('span');
-    span.textContent = item.emoji;
-    stack.appendChild(span);
-    }
-
-    // もし多すぎたら「+○」表示
-    if (item.count > maxDisplay) {
-    const more = document.createElement('div');
-    more.textContent = `+${item.count - maxDisplay}`;
-    more.style.fontSize = '0.8rem';
-    stack.appendChild(more);
-    }
-});
-}
-
-async function fetchReactions() {
-const res = await fetch('/api/reaction/summary');
-const summary = await res.json();
-
-updateStacks(summary);
-}
-
-            
-
-
-    // 0.1秒ごとに最新取得
-    setInterval(fetchReactions, 100);
-
-    // 初回ロード時にも取得
-    window.onload = fetchReactions;
-
 </script>
 </body>
 
