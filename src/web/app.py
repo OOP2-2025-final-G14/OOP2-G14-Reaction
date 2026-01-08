@@ -19,13 +19,15 @@ def create_app(reaction_callback, title="イベント"):
     @app.route('/api/reaction', methods=['POST'])
     def receive_reaction():
         data = request.get_json()
+        topic = data.get("topic", "default")
         emoji = data.get("emoji")
 
         if not emoji:
             return jsonify({"status": "error", "message": "emoji is required"}), 400
+        
 
         # DB保存（モデルの責務）
-        Reaction.add(emoji)
+        Reaction.add(topic, emoji)
 
         # GUI（Tkinter / Swing / etc）へ通知
         if reaction_callback:
@@ -37,7 +39,8 @@ def create_app(reaction_callback, title="イベント"):
     # 最新リアクション取得
     @app.route('/api/reaction', methods=['GET'])
     def get_reactions():
-        reactions = Reaction.latest(limit=20)
+        topic = request.args.get("topic", "default")
+        reactions = Reaction.latest(topic, limit=20)
 
         return jsonify([
             {
@@ -51,7 +54,8 @@ def create_app(reaction_callback, title="イベント"):
     # 絵文字ごとの集計（オプション）
     @app.route('/api/reaction/summary', methods=['GET'])
     def reaction_summary():
-        summary = Reaction.count_by_emoji()
+        topic = request.args.get("topic", "default")
+        summary = Reaction.count_by_emoji(topic)
 
         return jsonify([
             {
@@ -60,6 +64,8 @@ def create_app(reaction_callback, title="イベント"):
             }
             for row in summary
         ])
+    
+    
 
     
     # アプリ終了時の後処理
