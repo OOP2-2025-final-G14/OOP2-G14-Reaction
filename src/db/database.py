@@ -18,24 +18,39 @@ class BaseModel(Model):
 
 
 class Reaction(BaseModel):
+    topic = CharField(max_length=100)
     emoji = CharField(max_length=10)
 
     @classmethod
-    def add(cls, emoji):
-        return cls.create(emoji=emoji)
+    def add(cls, topic, emoji):
+        return cls.create(topic=topic, emoji=emoji)
 
     @classmethod
-    def latest(cls, limit=10):
-        return cls.select().order_by(cls.created_at.desc()).limit(limit)
-
+    def latest(cls, topic, limit=10):
+        return (
+            cls.select()
+            .where(cls.topic == topic)
+            .order_by(cls.created_at.desc())
+            .limit(limit)
+        )
+    
     @classmethod
-    def count_by_emoji(cls):
+    def count_by_emoji(cls, topic):
         return (
             cls
             .select(cls.emoji, fn.COUNT(cls.id).alias("cnt"))
+            .where(cls.topic == topic)
             .group_by(cls.emoji)
             .order_by(fn.COUNT(cls.id).desc())
         )
+    
+    # お題ごとに集計リセット（削除）
+    @classmethod
+    def reset_topic(cls, topic):
+        return cls.delete().where(cls.topic == topic).execute()
+    
+    
+
 
 
 TABLES = [Reaction]
