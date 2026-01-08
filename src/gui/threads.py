@@ -27,9 +27,25 @@ class FlaskServerThread(QThread):
         # Flaskアプリはまだ作成しない (タイトル確定後に作成)
         self.app = None
 
+        #False: 動作中, True: 一時停止中
+        self.paused = False
+
+    # 一時停止/再開切り替え
+    def toggle_pause(self):
+        self.paused = not self.paused
+        return self.paused
+
+    # 一時停止状態かどうか
+    def is_paused(self):
+        return self.paused
+
     def update_settings(self, title):
         """設定を更新してFlaskアプリを作成"""
-        self.app = create_app(reaction_callback=self.emit_reaction, title=title)
+        self.app = create_app(
+            reaction_callback=self.emit_reaction,
+            pause_checker=self.is_paused,
+            title=title
+        )
 
     def emit_reaction(self, emoji):
         """Flaskの中から呼ばれるコールバック"""
