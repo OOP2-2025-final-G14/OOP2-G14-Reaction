@@ -1,7 +1,36 @@
+import qrcode
+from io import BytesIO
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QWidget, 
                                QPushButton, QLabel, QTextEdit, QLineEdit, QGroupBox, QHBoxLayout)
+from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt
 from src.gui.threads import FlaskServerThread
+
+class QRWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("QRコード")
+        self.resize(300, 300)
+        
+        layout = QVBoxLayout()
+        self.qr_label = QLabel()
+        self.qr_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.qr_label)
+        self.setLayout(layout)
+
+    def set_qr_code(self, url):
+        qr = qrcode.QRCode(version=1, box_size=10, border=4)
+        qr.add_data(url)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # PIL Image to QPixmap
+        im_data = img.convert("RGBA").tobytes("raw", "RGBA")
+        qim = QImage(im_data, img.size[0], img.size[1], QImage.Format.Format_RGBA8888)
+        pixmap = QPixmap.fromImage(qim)
+        
+        self.qr_label.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -14,6 +43,7 @@ class MainWindow(QMainWindow):
         self.server_thread = FlaskServerThread()
         self.server_thread.reaction_received.connect(self.update_reaction)
         self.is_running = False
+        self.qr_window = None
 
     def _setup_ui(self):
         """UIコンポーネントの配置"""
@@ -46,6 +76,11 @@ class MainWindow(QMainWindow):
         
         url_layout.addWidget(url_label)
         url_layout.addWidget(self.address_display)
+        
+        self.qr_button = QPushButton("QR表示")
+        self.qr_button.clicked.connect(self.show_qr_code)
+        self.qr_button.setEnabled(False)
+        url_layout.addWidget(self.qr_button)
         
         server_layout.addWidget(self.toggle_button)
         server_layout.addLayout(url_layout)
@@ -92,7 +127,16 @@ class MainWindow(QMainWindow):
             self.address_display.setText(url)
             self.toggle_button.setText("サーバー稼働中")
             self.toggle_button.setEnabled(False)
+            self.qr_button.setEnabled(True)
             self.log_area.append(f"<span style='font-size: 14px; color: gray;'>--- サーバーを開始しました ---</span>")
+
+    def show_qr_code(self):
+        url = self.address_display.text()
+        if url and url != "サーバー停止中":
+            if not self.qr_window:
+                self.qr_window = QRWindow()
+            self.qr_window.set_qr_code(url)
+            self.qr_window.show()
         
     def update_reaction(self, emoji):
         self.log_area.append(f"{emoji}")
