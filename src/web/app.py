@@ -5,6 +5,8 @@ from src.db.database import Reaction, init_db, close_db
 def create_app(reaction_callback, title="イベント"):
     app = Flask(__name__)
     app.config['TITLE'] = title
+    #一時停止ボタン
+    app.config['PAUSED'] = False
 
     # DB初期化
     init_db()
@@ -18,12 +20,20 @@ def create_app(reaction_callback, title="イベント"):
     # リアクション登録
     @app.route('/api/reaction', methods=['POST'])
     def receive_reaction():
+        #　一時停止
+        if app.config['PAUSED']:
+            return jsonify({"status": "paused",
+                            "message": "リアクションは一時停止中です"}), 403 # 禁止されているというステータスコード
+
+        # データ受信
         data = request.get_json()
         topic = data.get("topic", "default")
         emoji = data.get("emoji")
 
+        # 入力チェック
         if not emoji:
-            return jsonify({"status": "error", "message": "emoji is required"}), 400
+            return jsonify({"status": "error",
+                            "message": "emoji is required"}), 400
         
 
         # DB保存（モデルの責務）
@@ -34,6 +44,17 @@ def create_app(reaction_callback, title="イベント"):
             reaction_callback(emoji)
 
         return jsonify({"status": "ok"})
+
+    # 一時停止トグル(ホスト専用API)
+    @app.route('/api/pause', methods=['POST'])
+    #ON/OFF切り替え
+    def toggle_pause():
+        #状態の切り替え
+        app.config['PAUSED'] = not app.config['PAUSED']
+        return jsonify({
+            "paused": app.config['PAUSED']
+        })
+
 
 
     # 最新リアクション取得
