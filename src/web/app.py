@@ -65,7 +65,24 @@ def create_app(reaction_callback, title="イベント"):
             for row in summary
         ])
     
-    
+    @app.route("/api/topic", methods=["POST"])
+    def change_topic():
+        data = request.get_json()
+        new_topic = data.get("topic")
+
+        if not new_topic:
+            return jsonify({
+                "status": "error",
+                "message": "topic is required"
+            }), 400
+
+        # ★ お題変更時にそのお題のデータを削除
+        Reaction.reset_topic(new_topic)
+
+        return jsonify({
+            "status": "ok",
+            "topic": new_topic
+        })
 
     
     # アプリ終了時の後処理
