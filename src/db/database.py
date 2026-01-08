@@ -44,10 +44,15 @@ class Reaction(BaseModel):
             .order_by(fn.COUNT(cls.id).desc())
         )
     
-    # お題ごとに集計リセット（削除）
+    # 指定したお題のデータのみ削除（初期化）
     @classmethod
     def reset_topic(cls, topic):
         return cls.delete().where(cls.topic == topic).execute()
+    
+    # 全データ削除
+    @classmethod
+    def reset_all(cls):
+        return cls.delete().execute()
     
     
 
@@ -64,3 +69,9 @@ def init_db():
 def close_db():
     if not db.is_closed():
         db.close()
+
+def reset_all_db():
+    close_db()
+    if os.path.exists(db_path):
+        os.remove(db_path)
+    init_db()
