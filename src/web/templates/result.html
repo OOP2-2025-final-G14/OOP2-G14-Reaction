@@ -17,9 +17,16 @@
     <canvas id="reactionChart" width="400" height="400"></canvas>
 
     <script>
+      const topic = "default";
+
       async function loadSummary() {
-        const res = await fetch("/api/reaction/summary");
+        const res = await fetch(`/api/reaction/summary?topic=${topic}`);
         const data = await res.json();
+
+        if (data.length === 0) {
+          alert("まだリアクションがありません");
+          return;
+        }
 
         const labels = data.map((item) => item.emoji);
         const counts = data.map((item) => item.count);

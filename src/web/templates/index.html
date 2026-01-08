@@ -12,7 +12,7 @@
     <div class="container">
         <div class="topic-area">
             <h1>{{ title }}</h1>
-            <p>ここにお題文が入ります</p>
+            <p id="topicText"></p>
         </div>
 
         <div class="reaction-area">
@@ -70,16 +70,20 @@ body {
 </style>
 
     <script>
-    function sendReaction(emoji) {
-        fetch('/api/reaction', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                emoji: emoji
-            })
-        });
+        const params = new URLSearchParams(window.location.search);
+        const topic = params.get("topic") || "default";
+        function sendReaction(emoji) {
+            fetch('/api/reaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    topic: topic,
+                    emoji: emoji
+
+                })
+            });
     }
 </script>
 </body>
