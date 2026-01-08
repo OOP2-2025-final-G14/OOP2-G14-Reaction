@@ -1,10 +1,11 @@
 import qrcode
 from io import BytesIO
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QWidget, 
-                               QPushButton, QLabel, QTextEdit, QLineEdit, QGroupBox, QHBoxLayout)
+                               QPushButton, QLabel, QTextEdit, QLineEdit, QGroupBox, QHBoxLayout, QMessageBox)
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt
 from src.gui.threads import FlaskServerThread
+from src.db.database import Reaction
 
 class QRWindow(QWidget):
     def __init__(self):
@@ -100,6 +101,11 @@ class MainWindow(QMainWindow):
         """)
         
         reaction_layout.addWidget(self.log_area)
+        
+        reset_button = QPushButton("データベースとログをリセット")
+        reset_button.clicked.connect(self.reset_db)
+        reaction_layout.addWidget(reset_button)
+        
         reaction_group.setLayout(reaction_layout)
 
         main_layout.addWidget(title_group)
@@ -144,3 +150,11 @@ class MainWindow(QMainWindow):
         self.log_area.verticalScrollBar().setValue(
             self.log_area.verticalScrollBar().maximum()
         )
+        
+    def reset_db(self):
+        ret = QMessageBox.question(self, "確認", "データベースとログを完全に削除しますか？",
+                                   QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if ret == QMessageBox.Yes:
+            Reaction.reset_all()
+            self.log_area.clear()
+            self.log_area.append(f"<span style='font-size: 14px; color: gray;'>--- データベースをリセットしました ---</span>")
