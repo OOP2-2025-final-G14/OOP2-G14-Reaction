@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>リアクション集計</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- 数値表示用プラグイン -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  </head>
+
+  <body>
+    <h2>リアクション集計結果</h2>
+
+    <canvas id="reactionChart" width="400" height="400"></canvas>
+
+    <script>
+      async function loadSummary() {
+        const res = await fetch("/api/reaction/summary");
+        const data = await res.json();
+
+        const labels = data.map((item) => item.emoji);
+        const counts = data.map((item) => item.count);
+
+        const ctx = document.getElementById("reactionChart").getContext("2d");
+
+        new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "リアクション数",
+                data: counts,
+                backgroundColor: [
+                  "#ff9999",
+                  "#99ccff",
+                  "#ffcc99",
+                  "#ccff99",
+                  "#ccccff",
+                  "#ff99cc",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              datalabels: {
+                color: "#000",
+                font: {
+                  size: 16,
+                  weight: "bold",
+                },
+                formatter: (value) => value,
+              },
+            },
+          },
+          plugins: [ChartDataLabels],
+        });
+      }
+
+      loadSummary();
+    </script>
+  </body>
+</html>
