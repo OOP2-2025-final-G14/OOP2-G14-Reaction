@@ -7,17 +7,89 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- 数値表示用プラグイン -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <!-- デザイン -->
+    <style>
+      body {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        background: #f7f9fc;
+        text-align: center;
+        margin: 0;
+        padding: 40px;
+      }
+
+      .title {
+        font-size: 28px;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      .card {
+        background: #fff;
+        width: 440px;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .ranking{
+        margin-top: 30px;
+        text-align: left;
+      }
+
+      /* ランキングの見出し */
+      .ranking h3 {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      /* ランキング1行分 */
+      .ranking-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .rank {
+        width: 40px;
+        font-weight: bold;
+      }
+
+      .emoji {
+        font-size: 22px;
+        margin-right: 10px;
+      }
+
+      .percent {
+        font-weight: bold;
+        margin-left: auto;
+      }
+    </style>
   </head>
 
   <body>
-    <h2>リアクション集計結果</h2>
+    <h2 class="title">リアクション集計結果</h2>
 
-    <canvas id="reactionChart" width="400" height="400"></canvas>
+    <div class="card">
+      <canvas id="reactionChart" width="400" height="400"></canvas>
+
+      <!-- ランキング表示 -->
+      <div id="ranking" class="ranking"></div>
+    </div>
 
     <script>
       const topic = "default";
+
+      // リアクションごとの色定義
+      const reactionColors = {
+        "👍": "#FDCB6E", // 黄色
+        "❤️": "#E74C3C", // 赤
+        "😂": "#2ECC71", // 緑
+        "😡": "#F39C12", //濃いオレンジ
+        "🙅‍♀️": "#7489FF", // 青
+        "😐": "#74B9FF", // 水色
+      };
 
       async function loadSummary() {
         const res = await fetch(`/api/reaction/summary?topic=${topic}`);
@@ -31,6 +103,11 @@
         const labels = data.map((item) => item.emoji);
         const counts = data.map((item) => item.count);
 
+        // emoji に対応した色を割り当て
+        const colors = labels.map(
+          (emoji) => reactionColors[emoji] || "#B2BEC3"
+        );
+        // 円グラフ
         const ctx = document.getElementById("reactionChart").getContext("2d");
 
         new Chart(ctx, {
@@ -41,31 +118,57 @@
               {
                 label: "リアクション数",
                 data: counts,
-                backgroundColor: [
-                  "#ff9999",
-                  "#99ccff",
-                  "#ffcc99",
-                  "#ccff99",
-                  "#ccccff",
-                  "#ff99cc",
-                ],
+                backgroundColor: colors,
               },
             ],
           },
           options: {
             responsive: true,
+            layout: {
+              padding: 20,
+            },
             plugins: {
-              datalabels: {
-                color: "#000",
-                font: {
-                  size: 16,
-                  weight: "bold",
+              legend: {
+                position: "bottom",
+                labels: {
+                  font: {
+                    size: 14,
+                  },
                 },
-                formatter: (value) => value,
               },
             },
           },
-          plugins: [ChartDataLabels],
+        });
+
+        //ランキング
+        renderRanking(data);
+      }
+      function renderRanking(data) {
+        //合計件数
+        const total = data.reduce((sum, item) => sum + item.count, 0);
+        //並び替え
+        const sorted = [...data].sort((a, b) => b.count - a.count);
+
+        const rankingDiv = document.getElementById("ranking");
+        rankingDiv.innerHTML = "<h3>リアクションランキング</h3>";
+
+        sorted.forEach((item, index) => {
+          const percent = ((item.count / total) * 100).toFixed(1);
+
+          const div = document.createElement("div");
+          div.className = "ranking-item";
+
+          div.innerHTML = `
+            <span class="rank">${index + 1}位</span>
+            <span class="emoji">${item.emoji}</span>
+            <span class="percent" style="color: ${
+              reactionColors[item.emoji] || "#333"
+            };">
+              ${percent}%
+            </span>
+          `;
+
+          rankingDiv.appendChild(div);
         });
       }
 
