@@ -1,5 +1,6 @@
 from PySide6.QtCore import QThread, Signal
 from src.web.app import create_app
+from werkzeug.serving import make_server
 import socket
 
 def get_local_ip():
@@ -25,6 +26,7 @@ class FlaskServerThread(QThread):
         # Flaskアプリの作成 (コールバックとしてシグナル発火メソッドを渡す)
         # Flaskアプリはまだ作成しない (タイトル確定後に作成)
         self.app = None
+        self.srv = None
 
     def update_settings(self, title):
         """設定を更新してFlaskアプリを作成"""
@@ -36,17 +38,15 @@ class FlaskServerThread(QThread):
 
     def stop(self):
         """サーバーを安全に停止させ、リソースを解放する"""
-        if self.isRunning():
-            # 強制終了
-            self.terminate()
-            # OSがポートを完全に解放するまで待機
-            self.wait()
-            print("リアクションサーバーを停止しました。")
+        if self.srv:
+            self.srv.shutdown()
+        self.wait()
+        print("リアクションサーバーを停止しました。")
 
     def run(self):
-        # スレッド内でFlask起動
         if self.app:
             try:
-                self.app.run(host=self.host, port=self.port, debug=False,use_reloader=False)
+                self.srv = make_server(self.host, self.port, self.app)
+                self.srv.serve_forever()
             except Exception as e:
                 print(f"Flask execution error: {e}")

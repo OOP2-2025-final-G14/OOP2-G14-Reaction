@@ -41,8 +41,7 @@ class MainWindow(QMainWindow):
 
         self._setup_ui()
         
-        self.server_thread = FlaskServerThread()
-        self.server_thread.reaction_received.connect(self.update_reaction)
+        self.server_thread = None
         self.is_running = False
         self.qr_window = None
 
@@ -118,7 +117,13 @@ class MainWindow(QMainWindow):
 
     def toggle_server(self):
         if not self.is_running:
+            # サーバー起動処理
             title = self.title_input.text() or "イベント"
+            
+            # スレッドを新規作成
+            self.server_thread = FlaskServerThread()
+            self.server_thread.reaction_received.connect(self.update_reaction)
+            
             self.title_input.setReadOnly(True)
             self.server_thread.update_settings(title)
             
@@ -131,10 +136,23 @@ class MainWindow(QMainWindow):
             url = f"http://{ip}:{port}"
             
             self.address_display.setText(url)
-            self.toggle_button.setText("サーバー稼働中")
-            self.toggle_button.setEnabled(False)
+            self.toggle_button.setText("サーバー停止")
             self.qr_button.setEnabled(True)
             self.log_area.append(f"<span style='font-size: 14px; color: gray;'>--- サーバーを開始しました ---</span>")
+        else:
+            # サーバー停止処理
+            if self.server_thread:
+                self.server_thread.stop()
+                self.server_thread = None
+            
+            self.is_running = False
+            self.title_input.setReadOnly(False)
+            self.address_display.setText("サーバー停止中")
+            self.address_display.setPlaceholderText("サーバー停止中")
+            
+            self.toggle_button.setText("サーバー起動")
+            self.qr_button.setEnabled(False)
+            self.log_area.append(f"<span style='font-size: 14px; color: gray;'>--- サーバーを停止しました ---</span>")
 
     def show_qr_code(self):
         url = self.address_display.text()
