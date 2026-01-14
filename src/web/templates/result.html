@@ -4,71 +4,222 @@
     <meta charset="UTF-8" />
     <title>リアクション集計</title>
 
-    <!-- Chart.js -->
+    <!-- Chart.js（グラフ描画用ライブラリ） -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- 数値表示用プラグイン -->
+    <!-- グラフ内に数値や％を表示するプラグイン -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <!-- ===== 画面デザイン ===== -->
+    <style>
+      /* ページ全体のスタイル */
+      body {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        background: #f7f9fc;
+        text-align: center;
+        margin: 0;
+        padding: 40px;
+      }
+
+      /* タイトルのスタイル */
+      .title {
+        font-size: 28px;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      /* グラフとランキングをまとめるカード */
+      .card {
+        background: #fff;
+        width: 440px;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      /* ランキング全体 */
+      .ranking {
+        margin-top: 30px;
+        text-align: left;
+      }
+
+      /* ランキング見出し */
+      .ranking h3 {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      /* ランキング1行分 */
+      .ranking-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      /* 順位表示 */
+      .rank {
+        width: 40px;
+        font-weight: bold;
+      }
+
+      /* 絵文字表示 */
+      .emoji {
+        font-size: 22px;
+        margin-right: 10px;
+      }
+
+      /* パーセント表示 */
+      .percent {
+        font-weight: bold;
+        margin-left: auto;
+      }
+    </style>
   </head>
 
   <body>
-    <h2>リアクション集計結果</h2>
+    <!-- ページタイトル -->
+    <h2 class="title">リアクション集計結果</h2>
 
-    <canvas id="reactionChart" width="400" height="400"></canvas>
+    <!-- グラフ＋ランキングをまとめたカード -->
+    <div class="card">
+      <!-- 円グラフ表示用キャンバス -->
+      <canvas id="reactionChart" width="400" height="400"></canvas>
+
+      <!-- ランキング表示エリア -->
+      <div id="ranking" class="ranking"></div>
+    </div>
 
     <script>
+      /* ===== 表示対象のトピック ===== */
       const topic = "default";
 
+      /* ===== リアクションごとの色定義 ===== */
+      const reactionColors = {
+        "👍": "#FDCB6E", // 黄色
+        "❤️": "#E74C3C", // 赤
+        "😂": "#2ECC71", // 緑
+        "😡": "#F39C12", // 濃いオレンジ
+        "🙅‍♀️": "#7489FF", // 青
+        "😐": "#74B9FF", // 水色
+      };
+
+      /* ===== サーバーから集計データを取得して表示 ===== */
       async function loadSummary() {
+        // APIからリアクション集計結果を取得
         const res = await fetch(`/api/reaction/summary?topic=${topic}`);
         const data = await res.json();
 
+        // データが空の場合はアラート表示
         if (data.length === 0) {
           alert("まだリアクションがありません");
           return;
         }
 
+        // 絵文字だけを配列にする（ラベル用）
         const labels = data.map((item) => item.emoji);
+
+        // 件数だけを配列にする（グラフ用）
         const counts = data.map((item) => item.count);
 
-        const ctx = document.getElementById("reactionChart").getContext("2d");
+        // 絵文字に対応する色を割り当てる
+        const colors = labels.map(
+          (emoji) => reactionColors[emoji] || "#B2BEC3"
+        );
+
+        /* ===== 円グラフ描画 ===== */
+        const ctx = document
+          .getElementById("reactionChart")
+          .getContext("2d");
 
         new Chart(ctx, {
-          type: "pie",
+          type: "pie", // 円グラフ
           data: {
             labels: labels,
             datasets: [
               {
                 label: "リアクション数",
                 data: counts,
-                backgroundColor: [
-                  "#ff9999",
-                  "#99ccff",
-                  "#ffcc99",
-                  "#ccff99",
-                  "#ccccff",
-                  "#ff99cc",
-                ],
+                backgroundColor: colors,
               },
             ],
           },
           options: {
             responsive: true,
+            layout: {
+              padding: 20,
+            },
             plugins: {
+              // 凡例（下に表示）
+              legend: {
+                position: "bottom",
+                labels: {
+                  font: {
+                    size: 14,
+                  },
+                },
+              },
+              // 円グラフ内に％を表示
               datalabels: {
-                color: "#000",
+                color: (context) =>
+                  context.dataset.backgroundColor[context.dataIndex],
                 font: {
                   size: 16,
                   weight: "bold",
                 },
-                formatter: (value) => value,
+                formatter: (value, context) => {
+                  // 合計数を計算
+                  const data = context.dataset.data;
+                  const total = data.reduce((sum, v) => sum + v, 0);
+
+                  // 割合（％）を計算
+                  const percent = (value / total) * 100;
+                  return percent.toFixed(1) + "%";
+                },
               },
             },
           },
           plugins: [ChartDataLabels],
         });
+
+        // ランキング表示
+        renderRanking(data);
       }
 
+      /* ===== ランキング表示処理 ===== */
+      function renderRanking(data) {
+        // 合計件数
+        const total = data.reduce((sum, item) => sum + item.count, 0);
+
+        // 件数の多い順に並び替え
+        const sorted = [...data].sort((a, b) => b.count - a.count);
+
+        const rankingDiv = document.getElementById("ranking");
+        rankingDiv.innerHTML = "<h3>リアクションランキング</h3>";
+
+        // ランキングを1行ずつ生成
+        sorted.forEach((item, index) => {
+          const percent = ((item.count / total) * 100).toFixed(1);
+
+          const div = document.createElement("div");
+          div.className = "ranking-item";
+
+          div.innerHTML = `
+            <span class="rank">${index + 1}位</span>
+            <span class="emoji">${item.emoji}</span>
+            <span class="percent" style="color: ${
+              reactionColors[item.emoji] || "#333"
+            };">
+              ${percent}%
+            </span>
+          `;
+
+          rankingDiv.appendChild(div);
+        });
+      }
+
+      // ページ読み込み時に実行
       loadSummary();
     </script>
   </body>
