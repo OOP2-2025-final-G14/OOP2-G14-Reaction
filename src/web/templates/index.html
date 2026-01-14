@@ -10,28 +10,41 @@
 
 <body>
     <div class="container">
-        <div class="topic-area">
+        <div class="topic-card">
             <h1>{{ title }}</h1>
             <p id="topicText"></p>
         </div>
 
         <div class="reaction-area">
             <div class="buttons">
-                <button onclick="sendReaction('👍')">👍</button>
-                <button onclick="sendReaction('😂')">😂</button>
-                <button onclick="sendReaction('❤️')">❤️</button>
-                <button onclick="sendReaction('😡')">😡</button>
-                <button onclick="sendReaction('😐')">😐</button>
-                <button onclick="sendReaction('🙅‍♀️')">🙅‍♀️</button>
+                <button class="reaction-btn" onclick="sendReaction('👍')">
+                <span>👍</span>
+</button>
+                <button class="reaction-btn" onclick="sendReaction('😂')">
+                <span>😂</span>
+</button>
+                <button class="reaction-btn" onclick="sendReaction('❤️')">
+                <span>❤️</span>
+</button>
+                <button class="reaction-btn" onclick="sendReaction('😡')">
+                <span>😡</span>
+</button>
+                <button class="reaction-btn" onclick="sendReaction('😐')">
+                <span>😐</span>
+</button>
+                <button class="reaction-btn" onclick="sendReaction('🙅‍♀️')">
+                <span>🙅‍♀️</span>
+</button>
             </div>
         </div>
     </div>
 </body>
 
 <style>
-/*空白の隙間をなくす*/
 body {
     margin: 0;
+    background-color: #00ffe5;
+    font-family: "Segoe UI", sans-serif;
 }
 
 .container {
@@ -40,7 +53,6 @@ body {
     flex-direction: column;
 }
 
-/* 上：お題エリア（60%） */
 .topic-area {
     flex: 6;
     display: flex;
@@ -49,7 +61,7 @@ body {
     align-items: center;
 }
 
-/* 下：リアクションエリア（40%） */
+
 .reaction-area {
     flex: 4;
     display: flex;
@@ -63,9 +75,107 @@ body {
     gap: 16px;
 }
 
-.buttons button {
-    font-size: 2rem;
-    padding: 12px 16px;
+.reaction-btn {
+    width: 90px;
+    height: 90px;
+
+    background: white;
+    border: 4px solid #00bfb3;
+
+    transform: rotate(45deg);
+    border-radius: 18px;
+
+    box-shadow:
+        0 10px 0 #009e94,
+        0 22px 35px rgba(0, 0, 0, 0.3);
+
+    font-size: 2.4rem;
+    cursor: pointer;
+
+    transition:
+        transform 0.18s cubic-bezier(.34,1.56,.64,1),
+        box-shadow 0.18s ease;
+}
+
+.reaction-btn span {
+    display: inline-block;
+    transform: rotate(-45deg);
+}
+
+.reaction-btn:hover {
+    transform: rotate(45deg) translateY(-8px);
+    box-shadow:
+        0 16px 0 #009e94,
+        0 30px 45px rgba(0, 0, 0, 0.4);
+}
+
+.reaction-btn:active {
+    transform: rotate(45deg) scale(0.9);
+    box-shadow:
+        0 6px 0 #009e94,
+        0 12px 20px rgba(0, 0, 0, 0.25);
+}
+
+.buttons button:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
+}
+
+.buttons button:active {
+    transform: scale(0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.topic-card {
+    background: #00bfb3; 
+    color: white;
+
+    padding: 44px 60px;
+    border-radius: 32px;
+
+    border: 6px solid white;
+
+    box-shadow:
+        0 10px 0 #009e94,
+        0 20px 40px rgba(0, 0, 0, 0.3);
+
+    text-align: center;
+    min-width: 340px;
+
+    animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+
+.quiz-label {
+    display: inline-block;
+    background: white;
+    color: #00bfb3;
+
+    font-weight: 900;
+    letter-spacing: 2px;
+
+    padding: 6px 20px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+}
+
+.topic-card h1 {
+    font-size: 2.3rem;
+    margin: 0;
+    font-weight: 800;
+}
+
+
+
+
+@keyframes popIn {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 </style>
 
