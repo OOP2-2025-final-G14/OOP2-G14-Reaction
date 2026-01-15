@@ -104,16 +104,23 @@ body {
 /* ===== result.html ===== */
 
 .title {
-    font-size: 2.4rem;
-    font-weight: 800;
+    display: block;
+    margin: 20px auto 40px auto; 
+    text-align: center;
+
+    font-size: 2.6rem;
+    font-weight: 900;
+
     color: white;
     background: #00bfb3;
-    display: inline-block;
-    padding: 18px 40px;
+
+    padding: 20px 48px;
     border-radius: 28px;
     border: 6px solid white;
-    box-shadow: 0 10px 0 #009e94, 0 20px 40px rgba(0, 0, 0, 0.3);
-    margin-bottom: 40px;
+
+    box-shadow:
+        0 10px 0 #009e94,
+        0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .card {
