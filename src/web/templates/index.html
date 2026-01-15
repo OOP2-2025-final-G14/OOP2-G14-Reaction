@@ -12,8 +12,7 @@
 <body>
     <div class="container">
         <div class="topic-card">
-            <h1>{{ title }}</h1>
-            <p id="topicText"></p>
+            <h1 id="topic-title">{{ title }}</h1>
         </div>
 
         <div class="reaction-area">
@@ -42,20 +41,19 @@
 
     
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const topic = params.get("topic") || "default";
-        function sendReaction(emoji) {
-            fetch('/api/reaction', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    topic: topic,
-                    emoji: emoji
+        const topic = document.getElementById("topic-title").textContent;
 
-                })
-            });
+        function sendReaction(emoji) {
+        fetch("/api/reaction", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+            topic: topic,
+            emoji: emoji
+            })
+        });
     }
 </script>
 </body>

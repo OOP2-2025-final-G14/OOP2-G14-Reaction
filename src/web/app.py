@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from src.db.database import Reaction, init_db, close_db
+from peewee import fn
 
 
 def create_app(reaction_callback, title="イベント"):
@@ -63,6 +64,28 @@ def create_app(reaction_callback, title="イベント"):
                 "count": row.cnt
             }
             for row in summary
+        ])
+    
+    @app.route('/api/reaction/summary/all', methods=['GET'])
+    def reaction_summary_all():
+        query = (
+            Reaction
+            .select(
+                Reaction.topic,
+                Reaction.emoji,
+                fn.COUNT(Reaction.id).alias("cnt")
+            )
+            .group_by(Reaction.topic, Reaction.emoji)
+            .order_by(Reaction.topic)
+        )
+
+        return jsonify([
+            {
+                "topic": row.topic,
+                "emoji": row.emoji,
+                "count": row.cnt
+            }
+            for row in query
         ])
     
     @app.route("/api/topic", methods=["POST"])
