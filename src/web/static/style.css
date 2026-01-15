@@ -1,0 +1,199 @@
+/* ===== 共通 ===== */
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #00ffe5;
+}
+
+/* ===== index.html ===== */
+
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.topic-area {
+    flex: 6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.reaction-area {
+    flex: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.reaction-btn {
+    width: 90px;
+    height: 90px;
+    background: white;
+    border: 4px solid #00bfb3;
+    transform: rotate(45deg);
+    border-radius: 18px;
+    box-shadow:
+        0 10px 0 #009e94,
+        0 22px 35px rgba(0, 0, 0, 0.3);
+    font-size: 2.4rem;
+    cursor: pointer;
+    transition:
+        transform 0.18s cubic-bezier(.34,1.56,.64,1),
+        box-shadow 0.18s ease;
+}
+
+.reaction-btn span {
+    display: inline-block;
+    transform: rotate(-45deg);
+}
+
+.reaction-btn:hover {
+    transform: rotate(45deg) translateY(-8px);
+    box-shadow:
+        0 16px 0 #009e94,
+        0 30px 45px rgba(0, 0, 0, 0.4);
+}
+
+.reaction-btn:active {
+    transform: rotate(45deg) scale(0.9);
+    box-shadow:
+        0 6px 0 #009e94,
+        0 12px 20px rgba(0, 0, 0, 0.25);
+}
+
+.topic-card {
+    background: #00bfb3;
+    color: white;
+    padding: 44px 60px;
+    border-radius: 32px;
+    border: 6px solid white;
+    box-shadow:
+        0 10px 0 #009e94,
+        0 20px 40px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    min-width: 340px;
+    animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+
+.topic-card h1 {
+    font-size: 2.3rem;
+    margin: 0;
+    font-weight: 800;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ===== result.html ===== */
+
+.title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: white;
+    background: #00bfb3;
+    display: inline-block;
+    padding: 18px 40px;
+    border-radius: 28px;
+    border: 6px solid white;
+    box-shadow: 0 10px 0 #009e94, 0 20px 40px rgba(0, 0, 0, 0.3);
+    margin-bottom: 40px;
+}
+
+.card {
+    background: white;
+    width: 460px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 28px;
+    border: 6px solid #00bfb3;
+    box-shadow: 0 10px 0 #009e94, 0 28px 50px rgba(0, 0, 0, 0.35);
+}
+
+.ranking {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.ranking h3 {
+    text-align: center;
+    margin-bottom: 18px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #00bfb3;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    background: #f8fffe;
+    border: 2px solid #00bfb3;
+    border-radius: 16px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.rank {
+    width: 40px;
+    font-weight: bold;
+}
+
+.emoji {
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+.percent {
+    font-weight: bold;
+    margin-left: auto;
+}
+
+.ranking-item.podium {
+    font-size: 18px;
+    font-weight: 800;
+    padding: 14px 18px;
+    transform: scale(1.05);
+}
+
+.rank-1 {
+    background: linear-gradient(135deg, #ffd700, #fff2a8);
+    border: 3px solid #ffd700;
+    box-shadow: 0 12px 30px rgba(255, 215, 0, 0.6);
+    animation: shine 1.5s infinite alternate;
+}
+
+.rank-2 {
+    background: linear-gradient(135deg, #dadada, #f4f4f4);
+    border: 3px solid #bfc3c7;
+}
+
+.rank-3 {
+    background: linear-gradient(135deg, #cd7f32, #e8b07a);
+    border: 3px solid #b87333;
+}
+
+@keyframes shine {
+    from {
+        box-shadow: 0 12px 30px rgba(255, 215, 0, 0.6);
+    }
+    to {
+        box-shadow: 0 18px 45px rgba(255, 215, 0, 0.9);
+    }
+}
