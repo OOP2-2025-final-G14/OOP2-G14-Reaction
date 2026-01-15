@@ -26,7 +26,19 @@
       <div id="ranking" class="ranking"></div>
     </div>
 
+    <h3 class="history-title">リアクション集計</h3>
+
+    <table class="history-table">
+      <thead>
+        <tr id="summary-header">
+          <th>お題</th>
+        </tr>
+      </thead>
+      <tbody id="summary-body"></tbody>
+    </table>
+
     <script>
+      const params = new URLSearchParams(window.location.search);
       /* ===== 表示対象のトピック ===== */
       const topic = "default";
 
@@ -118,6 +130,7 @@
 
         // ランキング表示
         renderRanking(data);
+        renderCountTable(data);
       }
 
       /* ===== ランキング表示処理 ===== */
@@ -159,8 +172,57 @@
         });
       }
 
+      async function loadTopicSummary() {
+        const res = await fetch("/api/reaction/summary/all");
+        const data = await res.json();
+
+        if (data.length === 0) return;
+
+        // ===== お題・リアクション抽出 =====
+        const topics = [...new Set(data.map(d => d.topic))];
+        const emojis = [...new Set(data.map(d => d.emoji))];
+
+        // ===== ヘッダー（横：リアクション）=====
+        const headerRow = document.getElementById("summary-header");
+        emojis.forEach(emoji => {
+          const th = document.createElement("th");
+          th.textContent = emoji;
+          headerRow.appendChild(th);
+        });
+
+        // ===== topic × emoji → count のマップ =====
+        const map = {};
+        data.forEach(d => {
+          map[d.topic] ??= {};
+          map[d.topic][d.emoji] = d.count;
+        });
+
+        // ===== ボディ（縦：お題）=====
+        const tbody = document.getElementById("summary-body");
+
+        topics.forEach(topic => {
+          const tr = document.createElement("tr");
+
+          // お題セル
+          const tdTopic = document.createElement("td");
+          tdTopic.textContent = topic;
+          tr.appendChild(tdTopic);
+
+          // リアクションごとの件数
+          emojis.forEach(emoji => {
+            const td = document.createElement("td");
+            td.textContent = map[topic]?.[emoji] ?? 0;
+            tr.appendChild(td);
+          });
+
+          tbody.appendChild(tr);
+        });
+      }
+
       // ページ読み込み時に実行
       loadSummary();
+      loadTopicSummary();
+
     </script>
   </body>
 </html>

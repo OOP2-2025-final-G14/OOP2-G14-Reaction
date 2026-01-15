@@ -54,6 +54,19 @@ class Reaction(BaseModel):
     def reset_all(cls):
         return cls.delete().execute()
     
+    @classmethod
+    def summary_by_topic(cls):
+        return (
+            cls
+            .select(
+                cls.topic,
+                cls.emoji,
+                fn.COUNT(cls.id).alias("count")
+            )
+            .group_by(cls.topic, cls.emoji)
+            .order_by(cls.topic)
+        )
+    
     
 
 
