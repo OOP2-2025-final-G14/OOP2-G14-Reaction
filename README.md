@@ -31,6 +31,7 @@ QRコード表示機能
 - ホストはユーザーから送られてきたリアクションを集計して、円グラフ、ランキングとして確認できる
 
 アプリ画像:
+--
 <img width="1470" height="919" alt="スクリーンショット 2026-01-20 16 25 31" src="https://github.com/user-attachments/assets/e162b3d0-fdef-4b4b-86be-871d7196ecdd" />
 <img width="1470" height="919" alt="スクリーンショット 2026-01-20 16 25 45" src="https://github.com/user-attachments/assets/dd035234-c8b6-4cf0-bb22-abb253fc408f" />
 <img width="1470" height="808" alt="スクリーンショット 2026-01-20 16 21 35" src="https://github.com/user-attachments/assets/f0b2b1ad-fcdd-4538-824c-f3152a8aa897" />
