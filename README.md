@@ -15,6 +15,8 @@ QRコード表示画面
 集計円グラフ画面
 <img width="1470" height="820" alt="スクリーンショット 2026-01-20 16 22 54" src="https://github.com/user-attachments/assets/8c83fd38-4457-4c03-969c-a40d89449a64" />
 
+集計ランキング画面
+<img width="1470" height="828" alt="スクリーンショット 2026-01-20 16 23 13" src="https://github.com/user-attachments/assets/b9543184-0d1a-4721-b312-44da4b05eab3" />
 
 概要
 --
@@ -67,5 +69,3 @@ python 3.17
 2.	必要ライブラリをインストール（上記参照）。
 3.	ターミナルで以下を実行：python main.py
 
-集計ランキング画面
-<img width="1470" height="828" alt="スクリーンショット 2026-01-20 16 23 13" src="https://github.com/user-attachments/assets/b9543184-0d1a-4721-b312-44da4b05eab3" />
