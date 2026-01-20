@@ -36,7 +36,7 @@ class QRWindow(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("リアクションボード")
+        self.setWindowTitle("MojiPop")
         self.resize(500, 600)
 
         self._setup_ui()
