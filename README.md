@@ -1,5 +1,7 @@
 # OOP2-G14-Reaction
-アプリ名: MojiPop
+アプリ名
+--
+MojiPop
 
 アプリ画像
 --
