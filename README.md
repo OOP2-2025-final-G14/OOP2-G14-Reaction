@@ -50,11 +50,14 @@ QRコード表示機能
 
 開発者と役割担当
 --
-開発者(Githubアカウント)|役割
-----
-shun-NMR|リーダー
-
-
+| 開発者(Githubアカウント) | 役割 | 
+|--------|--------|
+| shun-NMR | リーダー |
+| YoIshihama |  ホスト画面担当&GUI担当 |
+| takumamorinaga8-lab | ユーザー画面担当 |
+| Rionaitkk | サーバー＆ロジック担当 |
+| yuito25 | データベース＆統合担当
+|
 動作条件
 --
 python 3.17
