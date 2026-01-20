@@ -30,18 +30,6 @@ QRコード表示機能
 リアクション受信機能
 - ホストはユーザーから送られてきたリアクションを集計して、円グラフ、ランキングとして確認できる
 
-アプリ画像:
---
-サーバー立ち上げ画面
-<img width="1470" height="919" alt="スクリーンショット 2026-01-20 16 25 31" src="https://github.com/user-attachments/assets/e162b3d0-fdef-4b4b-86be-871d7196ecdd" />
-
-<img width="1470" height="919" alt="スクリーンショット 2026-01-20 16 25 45" src="https://github.com/user-attachments/assets/dd035234-c8b6-4cf0-bb22-abb253fc408f" />
-<img width="1470" height="808" alt="スクリーンショット 2026-01-20 16 21 35" src="https://github.com/user-attachments/assets/f0b2b1ad-fcdd-4538-824c-f3152a8aa897" />
-<img width="1470" height="820" alt="スクリーンショット 2026-01-20 16 22 54" src="https://github.com/user-attachments/assets/8c83fd38-4457-4c03-969c-a40d89449a64" />
-<img width="1470" height="828" alt="スクリーンショット 2026-01-20 16 23 13" src="https://github.com/user-attachments/assets/b9543184-0d1a-4721-b312-44da4b05eab3" />
-
-
-
 動作条件: require
 --
 python 3.17
@@ -60,3 +48,22 @@ python 3.17
 1.	プロジェクトのルートに移動（main.py があるフォルダ）。
 2.	必要ライブラリをインストール（上記参照）。
 3.	ターミナルで以下を実行：python main.py
+
+
+
+アプリ画像:
+--
+サーバー立ち上げ画面
+<img width="1470" height="919" alt="スクリーンショット 2026-01-20 16 25 31" src="https://github.com/user-attachments/assets/e162b3d0-fdef-4b4b-86be-871d7196ecdd" />
+
+QRコード表示画面
+<img width="1470" height="919" alt="スクリーンショット 2026-01-20 16 25 45" src="https://github.com/user-attachments/assets/dd035234-c8b6-4cf0-bb22-abb253fc408f" />
+
+リアクション送信画面
+<img width="1470" height="808" alt="スクリーンショット 2026-01-20 16 21 35" src="https://github.com/user-attachments/assets/f0b2b1ad-fcdd-4538-824c-f3152a8aa897" />
+
+集計円グラフ画面
+<img width="1470" height="820" alt="スクリーンショット 2026-01-20 16 22 54" src="https://github.com/user-attachments/assets/8c83fd38-4457-4c03-969c-a40d89449a64" />
+
+集計ランキング画面
+<img width="1470" height="828" alt="スクリーンショット 2026-01-20 16 23 13" src="https://github.com/user-attachments/assets/b9543184-0d1a-4721-b312-44da4b05eab3" />
